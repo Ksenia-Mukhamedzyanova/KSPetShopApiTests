@@ -108,3 +108,16 @@ class TestPet:
             assert response_json["tags"][0]["id"] == payload["tags"][0]["id"], "id тега не совпадает с ожидаемым"
             assert response_json["tags"][0]["name"] == payload["tags"][0]["name"], "имя тега не совпадает с ожидаемым"
             assert response_json["status"] == payload["status"], "статус не совпадает с ожидаемым"
+
+    @allure.title("Получение информации о питомце по id")
+    def test_get_pet_by_id(self, create_pet):
+        with allure.step("Получение id созданного питомца"):
+            pet_id = create_pet["id"]
+
+        with allure.step("Отправка запроса на получение информации о питомце по id"):
+            response = requests.get(f"{BASE_URL}/pet/{pet_id}")
+
+        with allure.step("Проверка статуса ответа и данных питомца"):
+            assert response.status_code == 200
+            assert response.json()["id"] == pet_id
+
