@@ -103,8 +103,7 @@ class TestPet:
             assert response_json["id"] == payload["id"], "id питомца не совпадает с ожидаемым"
             assert response_json["name"] == payload["name"], "имя питомца не совпадает с ожидаемым"
             assert response_json["category"]["id"] == payload["category"]["id"], "id категории не совпадает с ожидаемым"
-            assert response_json["category"]["name"] == payload["category"][
-                "name"], "название категории не совпадает с ожидаемым"
+            assert response_json["category"]["name"] == payload["category"]["name"], "название категории не совпадает с ожидаемым"
             assert response_json["photoUrls"] == payload["photoUrls"], "photoUrls не совпадает с ожидаемым"
             assert response_json["tags"][0]["id"] == payload["tags"][0]["id"], "id тега не совпадает с ожидаемым"
             assert response_json["tags"][0]["name"] == payload["tags"][0]["name"], "имя тега не совпадает с ожидаемым"
