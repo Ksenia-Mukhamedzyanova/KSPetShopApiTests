@@ -103,7 +103,8 @@ class TestPet:
             assert response_json["id"] == payload["id"], "id питомца не совпадает с ожидаемым"
             assert response_json["name"] == payload["name"], "имя питомца не совпадает с ожидаемым"
             assert response_json["category"]["id"] == payload["category"]["id"], "id категории не совпадает с ожидаемым"
-            assert response_json["category"]["name"] == payload["category"]["name"], "название категории не совпадает с ожидаемым"
+            assert response_json["category"]["name"] == payload["category"][
+                "name"], "название категории не совпадает с ожидаемым"
             assert response_json["photoUrls"] == payload["photoUrls"], "photoUrls не совпадает с ожидаемым"
             assert response_json["tags"][0]["id"] == payload["tags"][0]["id"], "id тега не совпадает с ожидаемым"
             assert response_json["tags"][0]["name"] == payload["tags"][0]["name"], "имя тега не совпадает с ожидаемым"
@@ -163,5 +164,28 @@ class TestPet:
 
         with allure.step("Проверка текстового содержимого ответа"):
             assert response.text == 'Pet not found', "Текст ошибки не совпал с ожидаемым"
-            
 
+    @allure.title("Получение списка питомцев по статусу")
+    @pytest.mark.parametrize(
+        "status, expected_status_code",
+        [
+            ("available", 200),
+            ("pending", 200),
+            ("sold", 200),
+            ("non-existent", 400),
+            ("", 400)
+        ]
+    )
+    def test_get_pet_by_status(self, status, expected_status_code):
+        with allure.step(f"Отправка запроса на получение питомца по статусу {status}"):
+            response = requests.get(url=f"{BASE_URL}/pet/findByStatus", params={"status": status})
+
+        with allure.step("Проверка статуса ответа"):
+            assert response.status_code == expected_status_code, "Код ответа не совпал с ожидаемым"
+
+        if response.status_code == 200:
+            with allure.step("Проверка формата успешного ответа"):
+                assert isinstance(response.json(), list), "Формат ответа не совпал с ожидаемым"
+        else:
+            with allure.step("Проверка формата ошибки"):
+                assert isinstance(response.json(), dict), "Формат ответа не совпал с ожидаемым"
