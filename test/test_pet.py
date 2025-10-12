@@ -163,5 +163,28 @@ class TestPet:
 
         with allure.step("Проверка текстового содержимого ответа"):
             assert response.text == 'Pet not found', "Текст ошибки не совпал с ожидаемым"
-            
 
+    @allure.title("Получение списка питомцев по статусу")
+    @pytest.mark.parametrize(
+        "status, expected_status_code",
+        [
+            ("available", 200),
+            ("pending", 200),
+            ("sold", 200),
+            ("non-existent", 400),
+            ("", 400)
+        ]
+    )
+    def test_get_pet_by_status(self, status, expected_status_code):
+        with allure.step(f"Отправка запроса на получение питомца по статусу {status}"):
+            response = requests.get(url=f"{BASE_URL}/pet/findByStatus", params={"status": status})
+
+        with allure.step("Проверка статуса ответа"):
+            assert response.status_code == expected_status_code, "Код ответа не совпал с ожидаемым"
+
+        if response.status_code == 200:
+            with allure.step("Проверка формата успешного ответа"):
+                assert isinstance(response.json(), list), "Формат ответа не совпал с ожидаемым"
+        else:
+            with allure.step("Проверка формата ошибки"):
+                assert isinstance(response.json(), dict), "Формат ответа не совпал с ожидаемым"
