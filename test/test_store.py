@@ -29,3 +29,24 @@ class TestStore:
             assert response_json["quantity"] == payload["quantity"], "количество не совпадает с ожидаемым"
             assert response_json["status"] == payload["status"], "статус заказа не совпадает с ожидаемым"
             assert response_json["complete"] == payload["complete"], "статус завершения заказа не совпадает с ожидаемым"
+
+    @allure.title("Получение информации о заказе по id")
+    def test_get_order_info_by_id(self, place_an_order):
+        with allure.step("Получение данных размещенного заказа"):
+            order_id = place_an_order["id"]
+            pet_id = place_an_order["petId"]
+            quantity = place_an_order["quantity"]
+            status = place_an_order["status"]
+            complete = place_an_order["complete"]
+
+        with allure.step("Отправка запроса на получение информации о заказе по id"):
+            response = requests.get(url=f"{BASE_URL}/store/order/{order_id}")
+            response_json = response.json()
+
+        with allure.step("Проверка статуса ответа и данных заказа"):
+            assert response.status_code == 200, "Код ответа не совпал с ожидаемым"
+            assert response_json["id"] == order_id, "id заказа не совпадает с ожидаемым"
+            assert response_json["petId"] == pet_id, "id питомца не совпадает с ожидаемым"
+            assert response_json["quantity"] == quantity, "количество не совпадает с ожидаемым"
+            assert response_json["status"] == status, "статус заказа не совпадает с ожидаемым"
+            assert response_json["complete"] == complete, "статус завершения заказа не совпадает с ожидаемым"
