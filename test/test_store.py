@@ -50,3 +50,20 @@ class TestStore:
             assert response_json["quantity"] == quantity, "количество не совпадает с ожидаемым"
             assert response_json["status"] == status, "статус заказа не совпадает с ожидаемым"
             assert response_json["complete"] == complete, "статус завершения заказа не совпадает с ожидаемым"
+
+    @allure.title("Удаление заказа по id")
+    def test_delete_order_by_id(self, place_an_order):
+        with allure.step("Получение id размещенного заказа"):
+            order_id = place_an_order["id"]
+
+        with allure.step("Отправка запроса на удаление заказа"):
+            response = requests.delete(url=f"{BASE_URL}/store/order/{order_id}")
+
+        with allure.step("Проверка статуса ответа"):
+            assert response.status_code == 200, "Код ответа не совпал с ожидаемым"
+
+        with allure.step("Отправка запроса на получение данных по id удаленного заказа"):
+            response = requests.get(url=f"{BASE_URL}/store/order/{order_id}")
+
+        with allure.step("Проверка статуса ответа"):
+            assert response.status_code == 404, "Код ответа не совпал с ожидаемым"
